@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # 1. Cài đặt compiler cho OS
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
     gcc build-essential \
     && rm -rf /var/lib/apt/lists/*
 
@@ -34,7 +34,7 @@ WORKDIR /app
 
 # 4. Cài đặt core lib cho OpenCV/YOLO
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
