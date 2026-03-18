@@ -1,0 +1,17 @@
+# Web Framework & ASGI
+fastapi==0.110.0
+uvicorn[standard]==0.27.1
+
+# Database
+sqlalchemy==2.0.28
+asyncpg==0.29.0
+alembic==1.13.1
+
+# AI & Image Processing (Tương thích Python 3.12)
+torch==2.2.1
+torchvision==0.17.1
+Pillow==10.2.0
+
+# Validation & Config
+pydantic==2.6.3
+pydantic-settings==2.2.1

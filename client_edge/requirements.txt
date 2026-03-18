@@ -1,0 +1,9 @@
+# Computer Vision & AI
+ultralytics>=8.1.0
+opencv-python-headless>=4.9.0  # Dùng headless trên Docker để không lỗi GUI
+numpy>=1.26.4
+
+# Network & Config
+httpx>=0.27.0
+requests>=2.31.0
+python-dotenv>=1.0.1
