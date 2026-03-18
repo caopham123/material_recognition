@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # 1. Cài đặt compiler cho OS
-RUN apt-get update && apt-get-install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc build-essential \
     && rm -rf /var/lib/apt/lists/*
 
@@ -32,7 +32,8 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx libglib2.0-0 \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # 4. Copy VENV từ Stage 1

@@ -5,7 +5,7 @@ services:
   # 1. DB SERVICE
   # =============
   postgres_db:
-    image: postgres:16-alpine
+    image: postgres:15
     container_name: material_db
     restart: unless-stopped
     env_file:
@@ -34,8 +34,8 @@ services:
       - "8000:8000"
     env_file:
       - ./server_core/.env
-    networks:
-      - material_network
+    # networks:
+    #   - material_network
     depends_on:
       postgres_db:
         condition: service_healthy
@@ -51,48 +51,47 @@ services:
     #           count: 1
     #           capabilities: [gpu]
 
-    # ==============
-    # 3. CLIENT EDGE
-    # ==============
-    client_edge:
-      build:
-        context: ./client_edge
-        dockerfile: Dockerfile
-      image: longsoncement/material_client:v1.0
-      restart: unless-stopped
-      networks:
-      - material_network
-      env_file:
+  # ==============
+  # 3. CLIENT EDGE
+  # ==============
+  client_edge:
+    build:
+      context: ./client_edge
+      dockerfile: Dockerfile
+    image: longsoncement/material_client:v1.0
+    restart: unless-stopped
+    # networks:
+    #   - material_network
+    env_file:
       - ./client_edge/.env
-      depends_on:
+    depends_on:
       - server_core
 
-    # ===============
-    # 4. PG ADMIN
-    # ===============
-    pgadmin:
-      image: dpage/pgadmin4
-      container_name: material_pgadmin
-      restart: unless-stopped
-      env_file:
-        - ./server_core/.env # Có thể tái sử dụng file env hoặc tạo file riêng
-      ports:
-        - "5050:80"
-      networks:
-        - material_network
-      depends_on:
-        postgres_db:
-          condition: service_healthy
+  # ===============
+  # 4. PG ADMIN
+  # ===============
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: material_pgadmin
+    restart: unless-stopped
+    env_file:
+      - ./server_core/.env # Có thể tái sử dụng file env hoặc tạo file riêng
+    ports:
+      - "5050:80"
+    # networks:
+    #   - material_network
+    depends_on:
+      postgres_db:
+        condition: service_healthy
 
-# Định nghĩa Volume và Network rõ ràng (Học hỏi điểm tốt từ repo Github)
 volumes:
   postgres_data:
     name: material_postgres_data
 
-networks:
-  material_network:
-    name: material_internal_net
-    driver: bridge
+# networks:
+#   material_network:
+#     name: material_internal_net
+#     driver: bridge
     
 
       

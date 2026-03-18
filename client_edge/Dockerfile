@@ -1,7 +1,7 @@
 # ===================
 # STAGE 1: BUILDER
 # ===================
-FROM python3:12-slim as builder
+FROM python:3.12-slim AS builder
 
 # Tối ưu hóa Python
 ENV PYTHONDONTWRITEBYTECODE=1 
@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # 1. Cài đặt compiler cho OS
-RUN apt-get update && apt-get-install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc build-essential \
     && rm -rf /var/lib/apt/lists/*
 
