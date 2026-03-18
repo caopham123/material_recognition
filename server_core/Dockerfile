@@ -1,50 +1,46 @@
-# ====================
-# STAGE 1: BUILDER (Cài đặt & Biên dịch)
-# ====================
+# ==========================================
+# STAGE 1: BUILDER
+# ==========================================
 FROM python:3.12-slim AS builder
-# Tối ưu hóa Python
-ENV PYTHONDONTWRITEBYTECODE=1 
+
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
-# 1. Cài đặt compiler cho OS
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc build-essential \
+# Cài đặt compiler cho OS
+RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
+    gcc \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Tạo môi trường ảo venv chuẩn PEP 668
+# Tạo môi trường ảo venv chuẩn PEP 668
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-
-# 3. Cài đặt lib Python
-COPY requirements.txt .
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir torch==2.2.1 torchvision==0.17.1
 
-# =====================
-# STAGE 2: RUNTIME
-# =====================
+# Cài đặt lib Python
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# ==========================================
+# STAGE 2: RUNTIME (DÀNH CHO SERVER_CORE)
+# ==========================================
 FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
-
-# 4. Copy VENV từ Stage 1
+# ĐÃ XÓA BỎ LỆNH CÀI ĐẶT libgl1... VÌ SERVER KHÔNG CẦN DÙNG ĐẾN ĐỒ HỌA
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# 5. Copy sources
 COPY ./src /app/src
 COPY alembic.ini /app/
 # COPY ./weights /app/weights
 
 EXPOSE 8000
 
-CMD ["uvicorn", "src.main:app", "--host 0.0.0.0", "--port", "8000", "--workers", "2"]
+# ĐÃ SỬA LỖI TÁCH CHUỖI "--host 0.0.0.0"
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
